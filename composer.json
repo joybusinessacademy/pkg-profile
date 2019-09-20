@@ -1,0 +1,27 @@
+{
+    "name": "joybusinessacademy/profile",
+    "description": "A profile package for the Laravel framework",
+    "authors": [
+        {
+            "name": "Haiping Lu",
+            "email": "zhiyanglu8@googlemail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "require-dev": {
+        "orchestra/testbench": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "JoyBusinessAcademy\\Profile\\": "src/",
+            "JoyBusinessAcademy\\Profile\\Seeder\\": "database/seeds/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JoyBusinessAcademy\\Profile\\Tests\\": "tests/",
+            "JoyBusinessAcademy\\Profile\\Seeder\\": "database/seeds/"
+        }
+    }
+}
