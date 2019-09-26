@@ -61,11 +61,12 @@ class ProfileTest extends TestCase
      * @depends create_a_user_with_the_factory
      * @depends update_the_user_profile
      */
-    public function get_the_user_profile($user)
+    public function get_the_user_profile($user, $data)
     {
         $profile = \JoyBusinessAcademy\Profile\Facades\Profile::getUserProfile($user);
 
         $this->assertEquals($user->id, $profile->user_id);
+        $this->assertEquals($data['region_id'], $profile->region->id);
 
     }
 
