@@ -35,6 +35,11 @@ class Region extends Model
         parent::boot();
     }
 
+    public function profiles()
+    {
+        return $this->hasMany(config('jba-profile.models.profile'), 'region_id');
+    }
+
     public function parent()
     {
         return $this->belongsTo(config('jba-profile.models.region'), 'parent_id');

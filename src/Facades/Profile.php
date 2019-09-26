@@ -16,6 +16,6 @@ class Profile extends Facade
 
     protected static function getFacadeAccessor()
     {
-        return 'JBAProfile';
+        return 'JBAProfileGateway';
     }
 }

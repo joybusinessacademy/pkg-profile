@@ -1,5 +1,7 @@
 <?php
 
+namespace  JoyBusinessAcademy\Profile\Seeder;
+
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder

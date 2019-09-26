@@ -1,54 +1,86 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zhiya
- * Date: 9/19/2019
- * Time: 10:42 PM
- */
 
 namespace JoyBusinessAcademy\Profile;
 
-use Illuminate\Support\Collection;
+use Illuminate\Cache\CacheManager;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Collection;
 
 class ProfileServiceProvider extends ServiceProvider
 {
-    public function boot(Filesystem $filesystem)
+    /**
+     * Register services.
+     *
+     * @return void
+     */
+    public function register()
     {
+        //$this->loadRoutesFrom(__DIR__ . '/../routes');
 
-        $this->publishes([
-            __DIR__ . '/../config/jba-profile.php' => config_path('jba-profile.php')
-        ], 'config');
 
-        $this->publishes([
-            __DIR__ . '/../database/migrations/0000_00_00_000001_create_jba_profile_regions_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_regions_table.php'),
-            __DIR__ . '/../database/migrations/0000_00_00_000003_create_jba_profile_profiles_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_profiles_table.php')
-        ], 'migrations');
+        $this->registerRoutes();
 
-        $this->publishes([
-            __DIR__ . '/../database/seeds/RegionSeeder.php' => $this->getSeederFileName($filesystem, 'RegionSeeder.php'),
-        ], 'seeds');
+        $this->mergeConfigFrom(__DIR__ . '/../config/jba-profile.php', 'jba-profile');
 
-        $this->app->singleton('JBAProfile', function($app) {
+        $this->registerBladeExtensions();
+    }
 
-            $handler = $app['config']->get('jba-profile.handlers.profile');
+    /**
+     * Bootstrap services.
+     *
+     * @return void
+     */
+    public function boot(CacheManager $cacheManager, Filesystem $filesystem)
+    {
+        //$this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->registerPublishing($filesystem);
 
-            return new $handler();
-        });
+        if($this->app->runningInConsole()) {
+            $this->commands([
 
-        $this->app->singleton('JBAProfileRegion', function($app){
-            $handler = $app['config']->get('jba-profile.handlers.region');
+            ]);
+        }
 
-            return new $handler();
+        $this->app->singleton('JBAProfileGateway', function($app) use($cacheManager) {
+
+            $gateway = $app->config['jba-profile.gateway'];
+
+            return new $gateway($cacheManager);
         });
     }
 
-    public function register()
+    protected function registerModelBindings()
     {
-        //$this->loadRoutesFrom(__DIR__ . '/routes.php');
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        //$config = $this->app->config['jba-profile.models'];
+
+    }
+
+    protected function registerPublishing($filesystem)
+    {
+        if(self::isNotLumen()) {
+
+            $this->publishes([
+                __DIR__ . '/../config/jba-profile.php' => config_path('jba-profile.php')
+
+            ], 'jba-profile-config');
+
+            $this->publishes([
+                __DIR__ . '/../database/migrations/0000_00_00_000001_create_jba_profile_regions_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_regions_table.php'),
+                __DIR__ . '/../database/migrations/0000_00_00_000003_create_jba_profile_profiles_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_profiles_table.php')
+            ], 'jba-profile-migrations');
+
+            $this->publishes([
+                __DIR__ . '/../database/seeds/RegionSeeder.php' => $this->getSeederFileName($filesystem, 'RegionSeeder.php'),
+            ], 'jba-profile-seeds');
+        }
+    }
+
+    public static function isNotLumen() : bool
+    {
+        return ! preg_match('/lumen/i', app()->version());
     }
 
     protected function getMigrationFileName(Filesystem $filesystem, $fileName): string
@@ -72,5 +104,19 @@ class ProfileServiceProvider extends ServiceProvider
                 return $filesystem->glob($path . $fileName);
             })->push($this->app->databasePath() . '/seeds/' . $fileName)
             ->first();
+    }
+
+    protected function registerRoutes()
+    {
+        Route::group([
+            'prefix' => 'jba-profile'
+        ], function(){
+            $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+        });
+    }
+
+    protected function registerBladeExtensions()
+    {
+        // define blade directive here for package
     }
 }

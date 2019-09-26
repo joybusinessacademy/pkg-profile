@@ -1,4 +1,5 @@
 <?php
+namespace  JoyBusinessAcademy\Profile\Seeder;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;

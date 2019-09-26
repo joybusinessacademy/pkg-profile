@@ -8,15 +8,24 @@
 
 namespace JoyBusinessAcademy\Profile\Tests;
 
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
+use JoyBusinessAcademy\Profile\Facades\Profile;
 use JoyBusinessAcademy\Profile\ProfileServiceProvider;
+use JoyBusinessAcademy\Profile\Seeder\DatabaseSeeder;
+use Orchestra\Testbench\Concerns\WithLoadMigrationsFrom;
 use Orchestra\Testbench\TestCase AS Base;
+use InvalidArgumentException;
+use Orchestra\Testbench\Database\MigrateProcessor;
 
 
 class TestCase extends Base
 {
     use RefreshDatabase;
+    //use MigrateRefreshSeedOnce;
+
+
+    protected static $migrated = false;
     /**
      * Get package providers.
      *
@@ -27,6 +36,13 @@ class TestCase extends Base
     {
         return [
             ProfileServiceProvider::class
+        ];
+    }
+
+    protected function getPackageAliases($app)
+    {
+        return [
+            'Profile' => Profile::class
         ];
     }
 
@@ -44,11 +60,14 @@ class TestCase extends Base
 
     private function prepareForTests()
     {
-        //Artisan::call('migrate');
-        //include(__DIR__ . '/../database/seeds/RegionSeeder.php');
-        //include(__DIR__ . '/../database/seeds/DatabaseSeeder.php');
-        //Artisan::call('db:seed');
+        if(! self::$migrated) {
 
+            $this->loadMigrationsOnce(__DIR__ . '/../database/migrations');
+
+            $this->seed(DatabaseSeeder::class);
+
+            self::$migrated = false;
+        }
         $this->withFactories(__DIR__ . '/../database/factories');
     }
 
@@ -65,5 +84,26 @@ class TestCase extends Base
         $app['config']->set('jba-profile', include __DIR__ . '/../config/jba-profile.php');
 
     }
+
+    protected function loadMigrationsOnce($paths): void
+    {
+        $options = \is_array($paths) ? $paths : ['--path' => $paths];
+
+        if (isset($options['--realpath']) && ! \is_bool($options['--realpath'])) {
+            throw new InvalidArgumentException('Expect --realpath to be a boolean.');
+        }
+
+        $options['--realpath'] = true;
+
+        $migrator = new MigrateProcessor($this, $options);
+        $migrator->up();
+
+        $this->resetApplicationArtisanCommands($this->app);
+
+        $this->beforeApplicationDestroyed(static function () use ($migrator) {
+            //$migrator->rollback();
+        });
+    }
+
 
 }

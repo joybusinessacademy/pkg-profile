@@ -2,6 +2,8 @@
 
 return [
 
+    'gateway' => \JoyBusinessAcademy\Profile\ProfileGateway::class,
+
     'models' => [
 
         /*
@@ -31,15 +33,29 @@ return [
         'regions' => 'regions'
     ],
 
-    'handlers' => [
+    'repositories' => [
 
-     //   'profile' => \JoyBusinessAcademy\Profile\Repositories\ProfileRepository::class,
+        'profile' => \JoyBusinessAcademy\Profile\Repositories\ProfileRepository::class,
 
-    //        'region' => \JoyBusinessAcademy\Profile\Repositories\RegionRepository::class
+        'region' => \JoyBusinessAcademy\Profile\Repositories\RegionRepository::class
     ],
 
     'cache' => [
 
+        /*
+         * By default all profiles are cached for 24 hours to speed up performance.
+         * When profiles are updated the cache is flushed automatically.
+         */
+        'expiration_time' => \DateInterval::createFromDateString('24 hours'),
 
+        /*
+         * The cache key used to store all permissions.
+         */
+
+        'key' => '_jba-profile_',
+
+        'model_key' => 'id',
+
+        'store' => 'default'
     ]
 ];

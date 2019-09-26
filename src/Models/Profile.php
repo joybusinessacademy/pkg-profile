@@ -3,9 +3,16 @@
 namespace JoyBusinessAcademy\Profile\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use JoyBusinessAcademy\Profile\ProfileServiceProvider;
+use JoyBusinessAcademy\Profile\Contracts\Profile AS ProfileContract;
+use JoyBusinessAcademy\Profile\Traits\BelongsToRegion;
+use JoyBusinessAcademy\Profile\Traits\BelongsToUser;
+use JoyBusinessAcademy\Profile\Traits\RefreshesProfileCache;
 
-class Profile extends Model
+
+class Profile extends Model implements ProfileContract
 {
+    use BelongsToUser, BelongsToRegion, RefreshesProfileCache;
 
     const GENDER_MALE = 'male';
     const GENDER_FEMALE = 'female';
@@ -13,6 +20,8 @@ class Profile extends Model
 
     protected $fillable = [
         'user_id',
+        'first_name',
+        'last_name',
         'phone',
         'gender',
         'avatar',
@@ -38,13 +47,17 @@ class Profile extends Model
         parent::boot();
     }
 
-    public function user()
+    public static function create(array $attributes = [])
     {
-        return $this->belongsTo(config('jba-profile.models.user'), 'user_id');
+        if(ProfileServiceProvider::isNotLumen() && app()->version() < '5.4') {
+            return parent::create($attributes);
+        }
+
+        return static::query()->create($attributes);
     }
 
-    public function region()
+    public function scopeWithAll($query)
     {
-        return $this->belongsTo(config('jba-profile.models.region'), 'region_id');
+        $query->with(['region']);
     }
 }
