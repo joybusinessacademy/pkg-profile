@@ -23,5 +23,15 @@
             "JoyBusinessAcademy\\Profile\\Tests\\": "tests/",
             "JoyBusinessAcademy\\Profile\\Seeder\\": "database/seeds/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JoyBusinessAcademy\\Profile\\ProfileServiceProvider"
+            ],
+            "aliases": {
+                "Profile": "JoyBusinessAcademy\\Profile\\Facades\\Profile"
+            }
+        }
     }
 }
