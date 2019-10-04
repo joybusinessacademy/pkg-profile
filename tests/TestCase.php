@@ -10,7 +10,7 @@ namespace JoyBusinessAcademy\Profile\Tests;
 
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use JoyBusinessAcademy\Profile\Facades\Profile;
+use JoyBusinessAcademy\Profile\Facades\JbaProfile;
 use JoyBusinessAcademy\Profile\ProfileServiceProvider;
 use JoyBusinessAcademy\Profile\Seeder\DatabaseSeeder;
 use Orchestra\Testbench\Concerns\WithLoadMigrationsFrom;
@@ -42,7 +42,7 @@ class TestCase extends Base
     protected function getPackageAliases($app)
     {
         return [
-            'Profile' => Profile::class
+            'Profile' => JbaProfile::class
         ];
     }
 

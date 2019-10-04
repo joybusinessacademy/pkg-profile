@@ -11,7 +11,7 @@ namespace JoyBusinessAcademy\Profile\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class Profile extends Facade
+class JbaProfile extends Facade
 {
 
     protected static function getFacadeAccessor()

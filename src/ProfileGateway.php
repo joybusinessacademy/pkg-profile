@@ -11,8 +11,12 @@ namespace JoyBusinessAcademy\Profile;
 
 use Illuminate\Cache\CacheManager;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use JoyBusinessAcademy\Profile\Exceptions\ProfileException;
 use JoyBusinessAcademy\Profile\Models\Profile;
+use JoyBusinessAcademy\Profile\Repositories\EducationRepository;
+use JoyBusinessAcademy\Profile\Repositories\ExperienceRepository;
+use JoyBusinessAcademy\Profile\Repositories\ReferenceRepository;
 use JoyBusinessAcademy\Profile\Repositories\RegionRepository;
 
 class ProfileGateway
@@ -53,12 +57,39 @@ class ProfileGateway
      */
     protected $regionRepository;
 
+    /**
+     * @var ReferenceRepository
+     */
+    protected $referenceRepository;
+
+    /**
+     * @var EducationRepository
+     */
+    protected $educationRepository;
+
+    /**
+     * @var ExperienceRepository
+     */
+    protected $experienceRepository;
+
 
     public function __construct(CacheManager $cacheManager)
     {
         $this->cacheManager = $cacheManager;
 
         $this->profileClass = config('jba-profile.models.profile');
+
+        $referenceRepo = config('jba-profile.repositories.reference');
+
+        $this->referenceRepository = new $referenceRepo($this);
+
+        $educationRepo = config('jba-profile.repositories.education');
+
+        $this->educationRepository = new $educationRepo($this);
+
+        $experienceRepo = config('jba-profile.repositories.experience');
+
+        $this->experienceRepository = new $experienceRepo($this);
 
         $this->initializeCache();
     }
@@ -108,26 +139,23 @@ class ProfileGateway
         return $this->cache->getStore();
     }
 
-
-
-    public function forgetCachedProfile($model)
+    public function forgetCachedProfile()
     {
+        $this->cache->forget($this->generateCacheKey());
         $this->profile = null;
-        $this->cache->forget($this->generateCacheKey($model));
     }
 
-    protected function generateCacheKey($model)
+    protected function generateCacheKey(Model $user = null)
     {
-        switch(get_class($model)) {
-            case $this->profileClass: {
-                return self::$cacheKey . 'user_' . $model->user_id . '_profile';
-            }
-            default: {
-                break;
-            }
+        if($user) {
+            return self::$cacheKey . 'user_' . $user->id . '_profile';
+        }
+        else if($this->profile) {
+            return self::$cacheKey . 'user_' . $this->profile->user_id . '_profile';
         }
 
-        return self::$cacheKey . 'user_' . $model->id . '_profile';
+        return null;
+
     }
 
     public function getUserProfile(Model $user)
@@ -142,7 +170,7 @@ class ProfileGateway
             $user->load('profile');
 
             if($user->profile) {
-                $user->profile->load(['user', 'region']);
+                $user->profile->load(['user', 'region', 'experiences', 'educations']);
             }
 
             return $user->profile;
@@ -166,4 +194,95 @@ class ProfileGateway
 
         return true;
     }
+
+    public function addOneProfileExperience(Model $user, $experience)
+    {
+        return $this->experienceRepository->addOneProfileExperience($user, $experience);
+    }
+
+    public function deleteOneProfileExperience(Model $user, $experience)
+    {
+        return $this->experienceRepository->deleteOneProfileExperience($user, $experience);
+    }
+
+    public function addProfileExperiences(Model $user, $experiences)
+    {
+        return $this->experienceRepository->addProfileExperiences($user, $experiences);
+    }
+
+    public function deleteProfileExperiences(Model $user, array $experienceIds)
+    {
+        return $this->experienceRepository->deleteProfileExperiences($user, $experienceIds);
+    }
+
+    public function updateOneProfileExperience(Model $user, $data)
+    {
+        return $this->experienceRepository->updateOneProfileExperience($user, $data);
+    }
+
+    public function addOneProfileEduction(Model $user, $education)
+    {
+        return $this->educationRepository->addOneProfileEduction($user, $education);
+    }
+
+    public function addProfileEducations(Model $user, $educations)
+    {
+        return $this->educationRepository->addProfileEducations($user, $educations);
+    }
+
+    public function updateOneProfileEducation(Model $user, $data)
+    {
+        return $this->educationRepository->updateOneProfileEducation($user, $data);
+    }
+
+    public function deleteOneProfileEducation(Model $user, Model $education)
+    {
+        return $this->educationRepository->deleteOneProfileEducation($user, $education);
+    }
+
+    public function deleteProfileEducations(Model $user, array $educationIds)
+    {
+        return $this->educationRepository->deleteProfileEducations($user, $educationIds);
+    }
+
+
+    public function addOneProfileReference(Model $user, $reference)
+    {
+        return $this->referenceRepository->addOneProfileReference($user, $reference);
+    }
+
+    public function addProfileReferences(Model $user, $references)
+    {
+        return $this->referenceRepository->addProfileReferences($user, $references);
+    }
+
+    public function updateOneProfileReference(Model $user, $data)
+    {
+        return $this->referenceRepository->updateOneProfileReference($user, $data);
+    }
+
+    public function deleteOneProfileReference(Model $user, Model $reference)
+    {
+        return $this->referenceRepository->deleteOneProfileReference($user, $reference);
+    }
+
+    public function deleteProfileReferences(Model $user, array $referenceIds)
+    {
+        return $this->referenceRepository->deleteProfileReferences($user, $referenceIds);
+    }
+
+/*
+    public function __call($method, ...$arguments)
+    {
+        $snakeCase = strtolower(preg_replace('/\B([A-Z])/', '_$1', $method));
+        $words = explode('_', $snakeCase);
+        $lastWord = array_pop($words);
+
+        $repository = $lastWord . 'Repository';
+
+        if(property_exists($this, $repository)) {
+            $this->$repository->$method($arguments);
+        }
+
+    }*/
 }

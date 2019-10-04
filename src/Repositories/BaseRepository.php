@@ -10,13 +10,18 @@ namespace JoyBusinessAcademy\Profile\Repositories;
 
 
 use Illuminate\Database\Eloquent\Model;
+use JoyBusinessAcademy\Profile\ProfileGateway;
 
-class BaseRepository implements RepositoryInterface
+class BaseRepository
 {
+    protected $gateway;
+
     protected $model;
 
-    public function __construct(Model $model)
+    public function __construct(ProfileGateway $gateway, Model $model)
     {
+        $this->gateway = $gateway;
+
         $this->model = $model;
     }
 

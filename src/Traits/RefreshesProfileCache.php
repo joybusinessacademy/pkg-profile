@@ -15,16 +15,17 @@ trait RefreshesProfileCache
 {
     public static function bootRefreshesProfileCache()
     {
-        static::saved(function(Model $model) {
-            app('JBAProfileGateway')->forgetCachedProfile($model);
+        static::saved(function() {
+            app('JBAProfileGateway')->forgetCachedProfile();
         });
 
-        static::updated(function(Model $model) {
-            app('JBAProfileGateway')->forgetCachedProfile($model);
+        static::updated(function() {
+            app('JBAProfileGateway')->forgetCachedProfile();
         });
 
         static::deleted(function(Model $model) {
-            app('JBAProfileGateway')->forgetCachedProfile($model);
+
+            app('JBAProfileGateway')->forgetCachedProfile();
         });
     }
 }

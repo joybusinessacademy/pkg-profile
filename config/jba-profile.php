@@ -17,7 +17,13 @@ return [
 
         'user' => \JoyBusinessAcademy\Profile\Models\User::class,
 
-        'region' => \JoyBusinessAcademy\Profile\Models\Region::class
+        'region' => \JoyBusinessAcademy\Profile\Models\Region::class,
+
+        'experience' => \JoyBusinessAcademy\Profile\Models\Experience::class,
+
+        'education' => \JoyBusinessAcademy\Profile\Models\Education::class,
+
+        'reference' => \JoyBusinessAcademy\Profile\Models\Reference::class,
     ],
 
     'table_names' => [
@@ -30,14 +36,27 @@ return [
 
         'users' => 'users',
 
-        'regions' => 'regions'
+        'regions' => 'regions',
+
+        'experiences' => 'experiences',
+
+        'educations' => 'educations',
+
+        'references' => 'references'
     ],
 
     'repositories' => [
 
         'profile' => \JoyBusinessAcademy\Profile\Repositories\ProfileRepository::class,
 
-        'region' => \JoyBusinessAcademy\Profile\Repositories\RegionRepository::class
+        'region' => \JoyBusinessAcademy\Profile\Repositories\RegionRepository::class,
+
+        'experience' => \JoyBusinessAcademy\Profile\Repositories\ExperienceRepository::class,
+
+        'education' => \JoyBusinessAcademy\Profile\Repositories\EducationRepository::class,
+
+        'reference' => \JoyBusinessAcademy\Profile\Repositories\ReferenceRepository::class,
+
     ],
 
     'cache' => [
@@ -53,8 +72,6 @@ return [
          */
 
         'key' => '_jba-profile_',
-
-        'model_key' => 'id',
 
         'store' => 'default'
     ]

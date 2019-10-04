@@ -69,7 +69,11 @@ class ProfileServiceProvider extends ServiceProvider
 
             $this->publishes([
                 __DIR__ . '/../database/migrations/0000_00_00_000001_create_jba_profile_regions_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_regions_table.php'),
-                __DIR__ . '/../database/migrations/0000_00_00_000003_create_jba_profile_profiles_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_profiles_table.php')
+                __DIR__ . '/../database/migrations/0000_00_00_000003_create_jba_profile_profiles_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_profiles_table.php'),
+                __DIR__ . '/../database/migrations/0000_00_00_000004_create_jba_profile_experiences_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_experiences_table.php'),
+                __DIR__ . '/../database/migrations/0000_00_00_000004_update_jba_profile_profiles_table.php' => $this->getMigrationFileName($filesystem, 'update_jba_profile_profiles_table.php'),
+                __DIR__ . '/../database/migrations/0000_00_00_000004_create_jba_profile_educations_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_educations_table.php'),
+                __DIR__ . '/../database/migrations/0000_00_00_000004_create_jba_profile_references_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_references_table.php'),
             ], 'jba-profile-migrations');
 
             $this->publishes([

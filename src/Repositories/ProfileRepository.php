@@ -15,16 +15,17 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use JoyBusinessAcademy\Profile\Exceptions\ProfileException;
+use JoyBusinessAcademy\Profile\ProfileGateway;
 
 class ProfileRepository extends BaseRepository
 {
     protected $request;
 
-    public function __construct()
+    public function __construct(ProfileGateway $gateway)
     {
         $model = config('jba-profile.models.profile');
 
-        parent::__construct(new $model());
+        parent::__construct($gateway, new $model());
     }
 
     public function getRequest()

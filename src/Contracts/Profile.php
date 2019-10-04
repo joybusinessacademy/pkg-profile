@@ -10,6 +10,7 @@ namespace JoyBusinessAcademy\Profile\Contracts;
 
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
 interface Profile
@@ -27,4 +28,9 @@ interface Profile
      * @return BelongsTo
      */
     public function region(): BelongsTo;
+
+    /**
+     * A profile may have multiple experiences
+     */
+    public function experiences(): HasMany;
 }
