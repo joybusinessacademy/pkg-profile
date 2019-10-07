@@ -10,11 +10,12 @@ namespace JoyBusinessAcademy\Profile\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
+use JoyBusinessAcademy\Profile\Traits\BelongsToProfile;
 use JoyBusinessAcademy\Profile\Traits\RefreshesProfileCache;
 
 class Experience extends Model
 {
-    use RefreshesProfileCache;
+    use RefreshesProfileCache, BelongsToProfile;
 
     const TYPE_FULL_TIME = 1;
     const TYPE_PART_TIME = 2;
@@ -46,11 +47,6 @@ class Experience extends Model
         parent::__construct($attributes);
 
         $this->setTable(config('jba-profile.table_names.experiences'));
-    }
-
-    public function profile()
-    {
-        return $this->belongsTo(config('jba-profile.models.profile'), 'profile_id');
     }
 
     public static function getTypeConstants()

@@ -24,12 +24,10 @@ class EducationRepository extends BaseRepository
         parent::__construct($gateway, new $model());
     }
 
-    public function addOneProfileEduction(Model $user, $education)
+    public function addOneProfileEducation(Model $user, $education)
     {
         if(!$education instanceof Model) {
-
-            $educationClass = config('jba-profile.models.education');
-            $education = new $educationClass($education);
+            $education = $this->model->fill($education);
         }
 
         return $this->addProfileEducations($user, collect([$education]));
@@ -63,10 +61,13 @@ class EducationRepository extends BaseRepository
     {
         if($profile = $this->gateway->getUserProfile($user)) {
 
-            if($education = $profile->educations()->where('id', $data['id'])->first()) {
+            if(!$education = $profile->educations->where('id', $data['id'])->first()) {
 
-                $education->update($data);
+                throw new ProfileException('Unable to update a education that does not exist');
+
             }
+
+            $education->update($data);
         }
 
         return true;

@@ -8,6 +8,7 @@
 
 namespace JoyBusinessAcademy\Profile\Tests\Unit;
 
+use Illuminate\Http\UploadedFile;
 use JoyBusinessAcademy\Profile\Facades\JbaProfile;
 use JoyBusinessAcademy\Profile\Models\Education;
 use JoyBusinessAcademy\Profile\Models\Experience;
@@ -60,6 +61,37 @@ class ProfileTest extends TestCase
 
     }
 
+    /**
+     * @test
+     * @depends create_a_user_with_the_factory
+     */
+    public function upload_profile_resume($user)
+    {
+        $file = UploadedFile::fake()->image('my_resume');
+
+        $resume = JbaProfile::uploadProfileResume($user, $file);
+
+        $profile = JbaProfile::getUserProfile($user);
+
+        $this->assertEquals($profile->resume->id, $resume->id);
+        $this->assertEquals($profile->resume->file_name, $resume->file_name);
+        $this->assertEquals($profile->resume->file_size, $resume->file_size);
+        $this->assertEquals($profile->resume->file_type, $resume->file_type);
+        $this->assertEquals($profile->resume->file_path, $resume->file_path);
+    }
+
+    /**
+     * @test
+     * @depends create_a_user_with_the_factory
+     */
+    public function delete_profile_resume($user)
+    {
+        JbaProfile::deleteProfileResume($user);
+
+        $profile = JbaProfile::getUserProfile($user);
+
+        $this->assertEquals($profile->resume, null);
+    }
     /**
      * @test
      * @depends create_a_user_with_the_factory
@@ -169,7 +201,7 @@ class ProfileTest extends TestCase
     {
         $education = factory(Education::class)->raw();
 
-        JbaProfile::addOneProfileEduction($user, $education);
+        JbaProfile::addOneProfileEducation($user, $education);
 
         $profile = JbaProfile::getUserProfile($user);
 
@@ -331,7 +363,6 @@ class ProfileTest extends TestCase
 
         $this->assertEquals($profile->references->count(), 0);
     }
-
 
     protected function deleteProfileEducations($user)
     {

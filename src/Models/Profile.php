@@ -10,12 +10,19 @@ use JoyBusinessAcademy\Profile\Traits\BelongsToUser;
 use JoyBusinessAcademy\Profile\Traits\HasManyEducations;
 use JoyBusinessAcademy\Profile\Traits\HasManyExperiences;
 use JoyBusinessAcademy\Profile\Traits\HasManyReferences;
+use JoyBusinessAcademy\Profile\Traits\HasOneResume;
 use JoyBusinessAcademy\Profile\Traits\RefreshesProfileCache;
 
 
 class Profile extends Model implements ProfileContract
 {
-    use BelongsToUser, BelongsToRegion, HasManyExperiences, HasManyEducations, HasManyReferences, RefreshesProfileCache;
+    use BelongsToUser,
+        BelongsToRegion,
+        HasManyExperiences,
+        HasManyEducations,
+        HasManyReferences,
+        HasOneResume,
+        RefreshesProfileCache;
 
     const GENDER_MALE = 'male';
     const GENDER_FEMALE = 'female';

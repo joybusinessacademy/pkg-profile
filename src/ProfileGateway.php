@@ -11,6 +11,7 @@ namespace JoyBusinessAcademy\Profile;
 
 use Illuminate\Cache\CacheManager;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use JoyBusinessAcademy\Profile\Exceptions\ProfileException;
 use JoyBusinessAcademy\Profile\Models\Profile;
@@ -18,6 +19,7 @@ use JoyBusinessAcademy\Profile\Repositories\EducationRepository;
 use JoyBusinessAcademy\Profile\Repositories\ExperienceRepository;
 use JoyBusinessAcademy\Profile\Repositories\ReferenceRepository;
 use JoyBusinessAcademy\Profile\Repositories\RegionRepository;
+use JoyBusinessAcademy\Profile\Repositories\ResumeRepository;
 
 class ProfileGateway
 {
@@ -72,6 +74,11 @@ class ProfileGateway
      */
     protected $experienceRepository;
 
+    /**
+     * @var ResumeRepository
+     */
+    protected $resumeRepository;
+
 
     public function __construct(CacheManager $cacheManager)
     {
@@ -90,6 +97,10 @@ class ProfileGateway
         $experienceRepo = config('jba-profile.repositories.experience');
 
         $this->experienceRepository = new $experienceRepo($this);
+
+        $resumeRepo = config('jba-profile.repositories.resume');
+
+        $this->resumeRepository = new $resumeRepo($this);
 
         $this->initializeCache();
     }
@@ -170,7 +181,7 @@ class ProfileGateway
             $user->load('profile');
 
             if($user->profile) {
-                $user->profile->load(['user', 'region', 'experiences', 'educations']);
+                $user->profile->load(['user', 'region', 'experiences', 'educations', 'resume']);
             }
 
             return $user->profile;
@@ -220,9 +231,9 @@ class ProfileGateway
         return $this->experienceRepository->updateOneProfileExperience($user, $data);
     }
 
-    public function addOneProfileEduction(Model $user, $education)
+    public function addOneProfileEducation(Model $user, $education)
     {
-        return $this->educationRepository->addOneProfileEduction($user, $education);
+        return $this->educationRepository->addOneProfileEducation($user, $education);
     }
 
     public function addProfileEducations(Model $user, $educations)
@@ -269,6 +280,16 @@ class ProfileGateway
     public function deleteProfileReferences(Model $user, array $referenceIds)
     {
         return $this->referenceRepository->deleteProfileReferences($user, $referenceIds);
+    }
+
+    public function uploadProfileResume(Model $user, UploadedFile $file)
+    {
+        return $this->resumeRepository->uploadProfileResume($user, $file);
+    }
+
+    public function deleteProfileResume(Model $user)
+    {
+        return $this->resumeRepository->deleteProfileResume($user);
     }
 
 /*

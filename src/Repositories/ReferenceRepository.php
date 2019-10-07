@@ -94,10 +94,12 @@ class ReferenceRepository extends BaseRepository
     {
         if($profile = $this->gateway->getUserProfile($user)) {
 
-            if($reference = $profile->references()->where('id', $data['id'])->first()) {
+            if(!$reference = $profile->references->where('id', $data['id'])->first()) {
 
-                $reference->update($data);
+                throw new ProfileException('Unable to update a reference that does not exist');
             }
+
+            $reference->update($data);
         }
 
         return true;

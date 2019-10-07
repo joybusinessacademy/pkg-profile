@@ -2,12 +2,16 @@
 
 namespace JoyBusinessAcademy\Profile;
 
+use Aws\Laravel\AwsServiceProvider;
+use Aws\S3\S3Client;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Collection;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
 
 class ProfileServiceProvider extends ServiceProvider
 {
@@ -24,8 +28,12 @@ class ProfileServiceProvider extends ServiceProvider
         $this->registerRoutes();
 
         $this->mergeConfigFrom(__DIR__ . '/../config/jba-profile.php', 'jba-profile');
+        //$this->mergeConfigFrom(__DIR__ . '/../config/filesystems.php', 'filesystems');
+
 
         $this->registerBladeExtensions();
+
+
     }
 
     /**
@@ -38,17 +46,42 @@ class ProfileServiceProvider extends ServiceProvider
         //$this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->registerPublishing($filesystem);
 
+        $this->registerS3Storage();
+
         if($this->app->runningInConsole()) {
             $this->commands([
 
             ]);
         }
 
+
+
         $this->app->singleton('JBAProfileGateway', function($app) use($cacheManager) {
 
             $gateway = $app->config['jba-profile.gateway'];
 
             return new $gateway($cacheManager);
+        });
+    }
+
+    protected function registerS3Storage()
+    {
+
+        Storage::extend('s3', function($app) {
+            $client = new S3Client([
+                'credentials' => [
+                    'key'    => $app->config['jba-profile.storage.s3.credentials.key'],
+                    'secret' => $app->config['jba-profile.storage.s3.credentials.secret'],
+                ],
+                'region' => $app->config['jba-profile.storage.s3.region'],
+                'version' => $app->config['jba-profile.storage.s3.version'],
+             //   'endpoint' => $config['endpoint'],
+                'ua_append' => [
+                    'L5MOD/' . AwsServiceProvider::VERSION,
+                ],
+            ]);
+
+            return new Filesystem(new AwsS3Adapter($client, $app->config['jba-profile.storage.s3.bucket']));
         });
     }
 
@@ -74,6 +107,7 @@ class ProfileServiceProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations/0000_00_00_000004_update_jba_profile_profiles_table.php' => $this->getMigrationFileName($filesystem, 'update_jba_profile_profiles_table.php'),
                 __DIR__ . '/../database/migrations/0000_00_00_000004_create_jba_profile_educations_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_educations_table.php'),
                 __DIR__ . '/../database/migrations/0000_00_00_000004_create_jba_profile_references_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_references_table.php'),
+                __DIR__ . '/../database/migrations/0000_00_00_000005_create_jba_profile_resumes_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_resumes_table.php'),
             ], 'jba-profile-migrations');
 
             $this->publishes([

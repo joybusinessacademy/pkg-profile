@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateJbaProfileReferencesTable extends Migration
+class CreateJbaProfileResumesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,16 @@ class CreateJbaProfileReferencesTable extends Migration
      */
     public function up()
     {
-        if(!Schema::hasTable($this->getTableName('references'))) {
+        if(!Schema::hasTable($this->getTableName('resumes'))) {
 
-            Schema::create($this->getTableName('references'), function (Blueprint $table) {
+            Schema::create($this->getTableName('resumes'), function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->bigInteger('profile_id')->unsigned();
-                $table->string('referrer', 64)->nullable();
-                $table->string('company', 32)->nullable();
-                $table->string('job_title', 64)->nullable();
-                $table->string('phone', 32)->nullable();
-                $table->string('email', 64)->nullable();
-                $table->text('description')->nullable();
+                $table->string('file_name', 64)->nullable();
+                $table->string('file_type', 32)->nullable();
+                $table->integer('file_size')->nullable();
+                $table->string('file_path', 128)->nullable();
+                $table->timestamps();
 
                 $table->foreign('profile_id')
                     ->references('id')
@@ -32,7 +31,7 @@ class CreateJbaProfileReferencesTable extends Migration
             });
         }
         else {
-            dump('Ignore' . __FILE__ . ' as ' . $this->getTableName('references') . ' table has exists');
+            dump('Ignore' . __FILE__ . ' as ' . $this->getTableName('resumes') . ' table has exists');
         }
     }
 
@@ -43,7 +42,7 @@ class CreateJbaProfileReferencesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists($this->getTableName('references'));
+        Schema::dropIfExists($this->getTableName('resumes'));
     }
 
     protected function getTableName($table)

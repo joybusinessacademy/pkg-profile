@@ -10,11 +10,12 @@ namespace JoyBusinessAcademy\Profile\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
+use JoyBusinessAcademy\Profile\Traits\BelongsToProfile;
 use JoyBusinessAcademy\Profile\Traits\RefreshesProfileCache;
 
 class Reference extends Model
 {
-    use RefreshesProfileCache;
+    use RefreshesProfileCache, BelongsToProfile;
 
     protected $fillable = [
         'profile_id',
@@ -35,8 +36,4 @@ class Reference extends Model
         $this->setTable(config('jba-profile.table_names.references'));
     }
 
-    public function profile()
-    {
-        return $this->belongsTo(config('jba-profile.models.profile'), 'profile_id');
-    }
 }

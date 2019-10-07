@@ -26,9 +26,7 @@ class ExperienceRepository extends BaseRepository
     public function addOneProfileExperience(Model $user, $experience)
     {
         if(!$experience instanceof Model) {
-
-            $experienceClass = config('jba-profile.models.experience');
-            $experience = new $experienceClass($experience);
+            $experience = $this->model->fill($experience);
         }
 
         return $this->addProfileExperiences($user, collect([$experience]));
@@ -95,10 +93,12 @@ class ExperienceRepository extends BaseRepository
     {
         if($profile = $this->gateway->getUserProfile($user)) {
 
-            if($experience = $profile->experiences()->where('id', $data['id'])->first()) {
+            if(!$experience = $profile->experiences->where('id', $data['id'])->first()) {
 
-                $experience->update($data);
+                throw new ProfileException('Unable to update a experience that does not exist');
             }
+
+            $experience->update($data);
         }
 
         return true;

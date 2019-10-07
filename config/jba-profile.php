@@ -24,6 +24,8 @@ return [
         'education' => \JoyBusinessAcademy\Profile\Models\Education::class,
 
         'reference' => \JoyBusinessAcademy\Profile\Models\Reference::class,
+
+        'resume' => \JoyBusinessAcademy\Profile\Models\Resume::class
     ],
 
     'table_names' => [
@@ -42,7 +44,9 @@ return [
 
         'educations' => 'educations',
 
-        'references' => 'references'
+        'references' => 'references',
+
+        'resumes' => 'resumes',
     ],
 
     'repositories' => [
@@ -56,6 +60,8 @@ return [
         'education' => \JoyBusinessAcademy\Profile\Repositories\EducationRepository::class,
 
         'reference' => \JoyBusinessAcademy\Profile\Repositories\ReferenceRepository::class,
+
+        'resume' => \JoyBusinessAcademy\Profile\Repositories\ResumeRepository::class,
 
     ],
 
@@ -74,5 +80,21 @@ return [
         'key' => '_jba-profile_',
 
         'store' => 'default'
+    ],
+
+    'storage' => [
+        's3' => [
+            'credentials' => [
+                'key'    => env('AWS_KEY', ''),
+                'secret' => env('AWS_SECRET', ''),
+            ],
+            'region' => env('AWS_REGION', 'us-east-1'),
+            'version' => 'latest',
+            'ua_append' => [
+                'L5MOD/' . \Aws\Laravel\AwsServiceProvider::VERSION,
+            ],
+            'bucket' => env('AWS_BUCKET', '')
+        ]
     ]
+
 ];
