@@ -10,8 +10,8 @@
     "minimum-stability": "dev",
     "require": {
         "doctrine/dbal": "^2.10@dev",
-        "aws/aws-sdk-php-laravel": "dev-master",
-        "league/flysystem-aws-s3-v3": "^1.0@dev"
+        "league/flysystem-aws-s3-v3": "^1.0@dev",
+        "aws/aws-sdk-php-laravel": "^3.3"
     },
     "require-dev": {
         "orchestra/testbench": "^4.0"
