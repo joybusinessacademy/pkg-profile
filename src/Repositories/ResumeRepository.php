@@ -31,18 +31,20 @@ class ResumeRepository extends BaseRepository
         if(!$path) {
             $reflector = new \ReflectionClass($this->model);
             $prefix = $reflector->getConstant('RESUME_PATH');
-            $path = config('env') .  '/' . trim($prefix, '/') . '/';
+            $path = (config('app.env') ? config('app.env') : config('env')) .  '/' . trim($prefix, '/') . '/';
         }
 
         $filePath = $path . Str::uuid()->toString();
 
         $this->deleteProfileResume($user);
 
+        Storage::disk('s3')->put($filePath, file_get_contents($file));
+
         $profile->resume()->create([
             'file_name' => $file->getClientOriginalName(),
-            'file_path' => $filePath,
+            'file_size' => $file->getSize(),
             'file_type' => $file->getClientMimeType(),
-            'file_size' => Storage::disk('s3')->put($file, $filePath)
+            'file_path' => $filePath
         ]);
 
         return $profile->resume()->first();

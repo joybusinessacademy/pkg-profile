@@ -46,14 +46,13 @@ class ProfileServiceProvider extends ServiceProvider
         //$this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->registerPublishing($filesystem);
 
-        $this->registerS3Storage();
+        //$this->registerS3Storage();
 
         if($this->app->runningInConsole()) {
             $this->commands([
 
             ]);
         }
-
 
 
         $this->app->singleton('JBAProfileGateway', function($app) use($cacheManager) {
