@@ -26,8 +26,6 @@ class ResumeRepository extends BaseRepository
 
     public function uploadProfileResume(Model $user, UploadedFile $file, $path = null)
     {
-        $profile = $this->gateway->getUserProfile($user);
-
         if(!$path) {
             $reflector = new \ReflectionClass($this->model);
             $prefix = $reflector->getConstant('RESUME_PATH');
@@ -39,6 +37,8 @@ class ResumeRepository extends BaseRepository
         $this->deleteProfileResume($user);
 
         Storage::disk('s3')->put($filePath, file_get_contents($file));
+
+        $profile = $this->gateway->getUserProfile($user);
 
         $profile->resume()->create([
             'file_name' => $file->getClientOriginalName(),
@@ -54,7 +54,7 @@ class ResumeRepository extends BaseRepository
     {
         $profile = $this->gateway->getUserProfile($user);
 
-        if($profile->resume) {
+        if($profile && $profile->resume) {
             Storage::disk('s3')->delete($profile->resume->file_path);
             $profile->resume->delete();
         }

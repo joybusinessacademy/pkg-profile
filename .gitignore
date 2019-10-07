@@ -14,3 +14,4 @@ yarn-error.log
 /.vscode
 /nbproject
 /.vagrant
+phpunit.xml
