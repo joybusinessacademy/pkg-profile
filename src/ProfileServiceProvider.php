@@ -122,8 +122,6 @@ class ProfileServiceProvider extends ServiceProvider
 
     protected function getMigrationFileName(Filesystem $filesystem, $fileName): string
     {
-        sleep(1);
-
         $timestamp = date('Y_m_d_His');
 
         return Collection::make($this->app->databasePath() . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR)
