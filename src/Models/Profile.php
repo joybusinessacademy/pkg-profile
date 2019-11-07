@@ -30,7 +30,8 @@ class Profile extends Model implements ProfileContract
 
     const EMPLOYMENT_YES = 1;
     const EMPLOYMENT_NOT = 2;
-    const EMPLOYMENT_OTHER = 3;
+    const EMPLOYMENT_NO_INTEREST = 4;
+    const EMPLOYMENT_OTHER = 8;
 
     protected $fillable = [
         'user_id',
