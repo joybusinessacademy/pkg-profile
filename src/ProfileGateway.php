@@ -15,6 +15,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use JoyBusinessAcademy\Profile\Exceptions\ProfileException;
 use JoyBusinessAcademy\Profile\Models\Profile;
+use JoyBusinessAcademy\Profile\Models\Resume;
 use JoyBusinessAcademy\Profile\Repositories\EducationRepository;
 use JoyBusinessAcademy\Profile\Repositories\ExperienceRepository;
 use JoyBusinessAcademy\Profile\Repositories\ReferenceRepository;
@@ -112,7 +113,7 @@ class ProfileGateway
         if(app()->version() <= '5.5') {
             if(self::$cacheExpirationTime instanceof \DateInterval) {
                 $interval = self::$cacheExpirationTime;
-                self::$cacheExpirationTime = $interval->m * 30 * 60 * 24 + $interval->id * 60 * 24 + $interval->h * 60 + $interval->i;
+                self::$cacheExpirationTime = $interval->m * 30 * 60 * 24 + $interval->d * 60 * 24 + $interval->h * 60 + $interval->i;
             }
         }
 
@@ -180,8 +181,32 @@ class ProfileGateway
 
             $user->load('profile');
 
+            if(!$user->profile && config('jba-profile.attributes.profile.auto_create')) {
+
+                $data = [];
+
+                foreach(config('jba-profile.attributes.profile.auto_create') as $key => $default) {
+                    $data[$key] = $user->{$key} ?: $default;
+                }
+
+
+                $user->profile()->create($data);
+
+                $user->load('profile');
+            }
+
             if($user->profile) {
-                $user->profile->load(['user', 'region', 'experiences', 'educations', 'resume']);
+
+                $relations = ['user', 'region', 'experiences', 'educations'];
+
+                if(config('jba-profile.attributes.resume.multiple')) {
+                    $relations[] = 'resumes';
+                }
+                else {
+                    $relations[] = 'resume';
+                }
+
+                $user->profile->load($relations);
             }
 
             return $user->profile;
@@ -287,9 +312,19 @@ class ProfileGateway
         return $this->resumeRepository->uploadProfileResume($user, $file);
     }
 
-    public function deleteProfileResume(Model $user)
+    public function deleteProfileResume(Model $user, Resume $resume = null)
     {
-        return $this->resumeRepository->deleteProfileResume($user);
+        return $this->resumeRepository->deleteProfileResume($user, $resume);
+    }
+
+    public function getProfileResumeContent(Resume $resume)
+    {
+        return $this->resumeRepository->getResumeContent($resume);
+    }
+
+    public function setDefaultProfileResume(Model $user, Resume $resume)
+    {
+        return $this->resumeRepository->setDefaultProfileResume($user, $resume);
     }
 
 /*

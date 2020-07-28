@@ -22,18 +22,11 @@ class ProfileServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //$this->loadRoutesFrom(__DIR__ . '/../routes');
-
-
         $this->registerRoutes();
 
         $this->mergeConfigFrom(__DIR__ . '/../config/jba-profile.php', 'jba-profile');
-        //$this->mergeConfigFrom(__DIR__ . '/../config/filesystems.php', 'filesystems');
-
 
         $this->registerBladeExtensions();
-
-
     }
 
     /**
@@ -43,10 +36,7 @@ class ProfileServiceProvider extends ServiceProvider
      */
     public function boot(CacheManager $cacheManager, Filesystem $filesystem)
     {
-        //$this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->registerPublishing($filesystem);
-
-        //$this->registerS3Storage();
 
         if($this->app->runningInConsole()) {
             $this->commands([
@@ -60,27 +50,6 @@ class ProfileServiceProvider extends ServiceProvider
             $gateway = $app->config['jba-profile.gateway'];
 
             return new $gateway($cacheManager);
-        });
-    }
-
-    protected function registerS3Storage()
-    {
-
-        Storage::extend('s3', function($app) {
-            $client = new S3Client([
-                'credentials' => [
-                    'key'    => $app->config['jba-profile.storage.s3.credentials.key'],
-                    'secret' => $app->config['jba-profile.storage.s3.credentials.secret'],
-                ],
-                'region' => $app->config['jba-profile.storage.s3.region'],
-                'version' => $app->config['jba-profile.storage.s3.version'],
-             //   'endpoint' => $config['endpoint'],
-                'ua_append' => [
-                    'L5MOD/' . AwsServiceProvider::VERSION,
-                ],
-            ]);
-
-            return new Filesystem(new AwsS3Adapter($client, $app->config['jba-profile.storage.s3.bucket']));
         });
     }
 
@@ -100,13 +69,14 @@ class ProfileServiceProvider extends ServiceProvider
             ], 'jba-profile-config');
 
             $this->publishes([
-                __DIR__ . '/../database/migrations/0000_00_00_000001_create_jba_profile_regions_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_regions_table.php'),
-                __DIR__ . '/../database/migrations/0000_00_00_000003_create_jba_profile_profiles_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_profiles_table.php'),
-                __DIR__ . '/../database/migrations/0000_00_00_000004_create_jba_profile_experiences_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_experiences_table.php'),
-                __DIR__ . '/../database/migrations/0000_00_00_000004_update_jba_profile_profiles_table.php' => $this->getMigrationFileName($filesystem, 'update_jba_profile_profiles_table.php'),
-                __DIR__ . '/../database/migrations/0000_00_00_000004_create_jba_profile_educations_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_educations_table.php'),
-                __DIR__ . '/../database/migrations/0000_00_00_000004_create_jba_profile_references_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_references_table.php'),
-                __DIR__ . '/../database/migrations/0000_00_00_000005_create_jba_profile_resumes_table.php' => $this->getMigrationFileName($filesystem, 'create_jba_profile_resumes_table.php'),
+                __DIR__ . '/../database/migrations/0000_00_00_000001_create_jba_profile_regions_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_jba_profile_regions_table.php', 10),
+                __DIR__ . '/../database/migrations/0000_00_00_000003_create_jba_profile_profiles_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_jba_profile_profiles_table.php', 20),
+                __DIR__ . '/../database/migrations/0000_00_00_000004_create_jba_profile_experiences_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_jba_profile_experiences_table.php', 30),
+                __DIR__ . '/../database/migrations/0000_00_00_000004_update_jba_profile_profiles_table.php.stub' => $this->getMigrationFileName($filesystem, 'update_jba_profile_profiles_table.php', 40),
+                __DIR__ . '/../database/migrations/0000_00_00_000004_create_jba_profile_educations_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_jba_profile_educations_table.php', 50),
+                __DIR__ . '/../database/migrations/0000_00_00_000004_create_jba_profile_references_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_jba_profile_references_table.php', 60),
+                __DIR__ . '/../database/migrations/0000_00_00_000005_create_jba_profile_resumes_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_jba_profile_resumes_table.php', 70),
+                __DIR__ . '/../database/migrations/0000_00_00_000006_update_jba_profile_resumes_table.php.stub' => $this->getMigrationFileName($filesystem, 'update_jba_profile_resumes_table.php', 80),
             ], 'jba-profile-migrations');
 
             $this->publishes([
@@ -120,9 +90,9 @@ class ProfileServiceProvider extends ServiceProvider
         return ! preg_match('/lumen/i', app()->version());
     }
 
-    protected function getMigrationFileName(Filesystem $filesystem, $fileName): string
+    protected function getMigrationFileName(Filesystem $filesystem, $fileName, $order): string
     {
-        $timestamp = date('Y_m_d_His');
+        $timestamp = date('Y_m_d_') . (date('His') + $order);
 
         return Collection::make($this->app->databasePath() . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR)
             ->flatMap(function ($path) use ($filesystem, $fileName) {
@@ -133,7 +103,6 @@ class ProfileServiceProvider extends ServiceProvider
 
     protected function getSeederFileName(Filesystem $filesystem, $fileName): string
     {
-
         return Collection::make($this->app->databasePath() . DIRECTORY_SEPARATOR . 'seeds' . DIRECTORY_SEPARATOR)
             ->flatMap(function ($path) use ($filesystem, $fileName) {
                 return $filesystem->glob($path . $fileName);
@@ -143,11 +112,20 @@ class ProfileServiceProvider extends ServiceProvider
 
     protected function registerRoutes()
     {
-        Route::group([
-            'prefix' => 'jba-profile'
-        ], function(){
-            $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
-        });
+        if(config('jba-profile.route')) {
+            Route::group([
+                'prefix' => config('jba-profile.route.prefix'),
+                'namespace' => config('jba-profile.route.namespace'),
+                'middleware' => config('jba-profile.route.middleware'),
+                'name' => config('jba-profile.route.prefix_name')
+            ], function () {
+                if (method_exists($this, 'loadRoutesFrom')) {
+                    $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+                } else {
+                    require __DIR__ . '/../routes/web.php';
+                }
+            });
+        }
     }
 
     protected function registerBladeExtensions()

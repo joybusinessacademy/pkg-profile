@@ -65,6 +65,22 @@ return [
 
     ],
 
+    'attributes' => [
+
+        'resume' => [
+            'multiple' => env('PROFILE_RESUME_MULTIPLE', false),
+            'maximum' => env('PROFILE_RESUME_MAXIMUM', 5),
+            'max_size' => env('PROFILE_RESUME_MAX_SIZE', 20000),
+            'mime_types' => env('PROFILE_RESUME_MIME_TYPES', 'pdf,doc,txt')
+        ],
+
+        'profile' => [
+            'auto_create' => [
+                'name' => ''
+            ]
+        ],
+    ],
+
     'cache' => [
 
         /*
@@ -95,6 +111,13 @@ return [
             ],
             'bucket' => env('AWS_BUCKET', '')
         ]
+    ],
+
+    'route' => [
+        'prefix' => 'jba-profile',
+        'middleware' => ['auth'],
+        'namespace' => 'JoyBusinessAcademy\Profile\Controllers',
+        'prefix_name' => 'jba-profile.'
     ]
 
 ];

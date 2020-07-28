@@ -1,0 +1,44 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class UpdateJbaProfileResumesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table($this->getTableName('resumes'), function (Blueprint $table) {
+            $table->boolean('selected')->after('file_path')->default(false);
+        });
+
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table($this->getTableName('resumes'), function (Blueprint $table) {
+            $table->dropColumn('selected');
+        });
+    }
+
+    protected function getTableName($table)
+    {
+        $tables = config('jba-profile.table_names');
+
+        if(isset($tables[$table])) {
+            return $tables[$table];
+        }
+
+        throw new \ErrorException('Invalid table name in ' . __FUNCTION__);
+    }
+}

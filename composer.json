@@ -1,15 +1,15 @@
 {
     "name": "joybusinessacademy/pkg-profile",
-    "description": "A profile package for the Laravel framework",
+    "description": "A profile package for JBA projects",
     "authors": [
         {
             "name": "Haiping Lu",
-            "email": "zhiyanglu8@googlemail.com"
+            "email": "haiping@prideandjoy.org"
         }
     ],
     "minimum-stability": "dev",
     "require": {
-        "doctrine/dbal": "^2.10@dev",
+        "doctrine/dbal": "^2.7@dev",
         "league/flysystem-aws-s3-v3": "^1.0@dev",
         "aws/aws-sdk-php-laravel": "^3.3"
     },
@@ -19,8 +19,13 @@
     "autoload": {
         "psr-4": {
             "JoyBusinessAcademy\\Profile\\": "src/",
+            "JoyBusinessAcademy\\Profile\\Controllers\\": "src/Http/Controllers",
             "JoyBusinessAcademy\\Profile\\Seeder\\": "database/seeds/"
-        }
+        },
+
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
