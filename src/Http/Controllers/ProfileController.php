@@ -16,7 +16,8 @@ class ProfileController extends Controller
 {
     public function updateCoverLetter(CoverLetterRequest $request)
     {
-        $profile = JbaProfile::updateProfile($request->user(), ['cover_letter' => $request->cover_letter]);
+        JbaProfile::updateProfile($request->user(), ['cover_letter' => $request->cover_letter]);
+        $profile = JbaProfile::getUserProfile($request->user());
         return $profile->cover_letter;
     }
 }
