@@ -20,7 +20,7 @@ class CoverLetterRequest extends FormRequest
     public function rules()
     {
         return [
-            'cover_letter' => 'required|min:' . config('jba-profile.attributes.cover_letter.max_size')
+            'cover_letter' => 'required|between:' . config('jba-profile.attributes.cover_letter.min_size') . ',' . config('jba-profile.attributes.cover_letter.max_size')
         ];
     }
 }

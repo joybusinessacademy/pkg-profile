@@ -82,6 +82,7 @@ return [
 
         'cover_letter' => [
             'max_size' => env('PROFILE_COVER_LETTER_MAX_SIZE', 10000),
+            'min_size' => env('PROFILE_COVER_LETTER_MIN_SIZE', 50),
             'mime_types' => env('PROFILE_COVER_LETTER_MIME_TYPES', 'pdf,doc,txt')
         ]
     ],
