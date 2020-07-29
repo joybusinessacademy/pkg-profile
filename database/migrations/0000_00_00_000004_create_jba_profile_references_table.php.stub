@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+use JoyBusinessAcademy\Profile\Contracts\Migration;
 
 class CreateJbaProfileReferencesTable extends Migration
 {
@@ -44,16 +44,5 @@ class CreateJbaProfileReferencesTable extends Migration
     public function down()
     {
         Schema::dropIfExists($this->getTableName('references'));
-    }
-
-    protected function getTableName($table)
-    {
-        $tables = config('jba-profile.table_names');
-
-        if(isset($tables[$table])) {
-            return $tables[$table];
-        }
-
-        throw new \ErrorException('Invalid table name in ' . __FUNCTION__);
     }
 }

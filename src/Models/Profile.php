@@ -42,6 +42,8 @@ class Profile extends Model implements ProfileContract
         'phone',
         'gender',
         'avatar',
+        'personal_summary',
+        'cover_letter',
         'location',
         'region_id',
         'date_of_birth',

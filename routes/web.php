@@ -29,4 +29,7 @@
     $router->delete('/resumes/{resume}', 'ResumeController@remove')
         ->name(dotUrl(config('jba-profile.route.prefix')) . '.resumes.remove')
         ->where('resume', '\d+');
+
+    $router->put('/cover_letter', 'ProfileController@updateCoverLetter')
+        ->name(dotUrl(config('jba-profile.route.prefix')) . '.cover_letter.update');
 });

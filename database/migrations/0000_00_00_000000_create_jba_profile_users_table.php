@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
+use JoyBusinessAcademy\Profile\Contracts\Migration;
 
 class CreateJbaProfileUsersTable extends Migration
 {
@@ -13,9 +13,9 @@ class CreateJbaProfileUsersTable extends Migration
      */
     public function up()
     {
-        if(!Schema::hasTable('users')) {
+        if(!Schema::hasTable($this->getTableName('users'))) {
 
-            Schema::create('users', function (Blueprint $table) {
+            Schema::create($this->getTableName('users'), function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('name', 64);
                 $table->string('email', 128)->unique();
@@ -26,7 +26,7 @@ class CreateJbaProfileUsersTable extends Migration
             });
         }
         else {
-            dump('Ignore' . __FILE__ . ' as users table has exists');
+            dump('Ignore ' . __FILE__ . ' as users table has exists');
         }
     }
 
@@ -37,6 +37,6 @@ class CreateJbaProfileUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists($this->getTableName('users'));
     }
 }

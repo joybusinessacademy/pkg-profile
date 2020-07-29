@@ -62,7 +62,7 @@ return [
         'reference' => \JoyBusinessAcademy\Profile\Repositories\ReferenceRepository::class,
 
         'resume' => \JoyBusinessAcademy\Profile\Repositories\ResumeRepository::class,
-
+        
     ],
 
     'attributes' => [
@@ -79,6 +79,11 @@ return [
                 'name' => ''
             ]
         ],
+
+        'cover_letter' => [
+            'max_size' => env('PROFILE_COVER_LETTER_MAX_SIZE', 10000),
+            'mime_types' => env('PROFILE_COVER_LETTER_MIME_TYPES', 'pdf,doc,txt')
+        ]
     ],
 
     'cache' => [
