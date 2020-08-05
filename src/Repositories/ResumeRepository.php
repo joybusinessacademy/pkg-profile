@@ -31,7 +31,7 @@ class ResumeRepository extends BaseRepository
         if(!$path) {
             $reflector = new \ReflectionClass($this->model);
             $prefix = $reflector->getConstant('RESUME_PATH');
-            $path = (config('app.env') ? config('app.env') : config('env')) .  '/' . trim($prefix, '/') . '/';
+            $path = (config('app.env') ? config('app.env') : config('env')) .  '/' . trim($prefix, '/') . '/' . date('Y/m') . '/';
         }
         if(method_exists(Str::class, "uuid")) {
             $filePath = $path . Str::uuid()->toString();
@@ -57,7 +57,14 @@ class ResumeRepository extends BaseRepository
 
             $resume = new Resume($data);
 
-            return $this->addProfileResumes($user, collect([$resume]));
+            if($this->addProfileResumes($user, collect([$resume]))) {
+
+                $profile = $this->gateway->getUserProfile($user);
+
+                return $profile->resumes->last();
+            }
+
+            return false;
         }
         else {
 
