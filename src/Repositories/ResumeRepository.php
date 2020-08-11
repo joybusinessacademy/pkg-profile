@@ -34,10 +34,10 @@ class ResumeRepository extends BaseRepository
             $path = (config('app.env') ? config('app.env') : config('env')) .  '/' . trim($prefix, '/') . '/' . date('Y/m') . '/';
         }
         if(method_exists(Str::class, "uuid")) {
-            $filePath = $path . Str::uuid()->toString();
+            $filePath = $path . (config('jba-profile.attributes.resume.keep_storage') ? $user->id . '-' : '') . Str::uuid()->toString();
         }
         else {
-            $filePath = $path . uuid();
+            $filePath = $path . (config('jba-profile.attributes.resume.keep_storage') ? $user->id . '-' : '') . uuid();
         }
 
         $this->deleteProfileResume($user);
@@ -87,7 +87,9 @@ class ResumeRepository extends BaseRepository
             });
 
             if($exist) {
-                Storage::disk('s3')->delete($resume->file_path);
+                if(!config('jba-profile.attributes.resume.keep_storage')) {
+                    Storage::disk('s3')->delete($resume->file_path);
+                }
                 $resume->delete();
             }
         }
@@ -96,7 +98,9 @@ class ResumeRepository extends BaseRepository
             //Don't delete the existing one if multiple resumes are enabled
 
             if ($profile->resume) {
-                Storage::disk('s3')->delete($profile->resume->file_path);
+                if(!config('jba-profile.attributes.resume.keep_storage')) {
+                    Storage::disk('s3')->delete($profile->resume->file_path);
+                }
                 $profile->resume->delete();
             }
         }
@@ -138,7 +142,12 @@ class ResumeRepository extends BaseRepository
             $path = (config('app.env') ? config('app.env') : config('env')) .  '/' . trim($prefix, '/') . '/';
         }
 
-        $filePath = $path . Str::uuid()->toString();
+        if(method_exists(Str::class, "uuid")) {
+            $filePath = $path . (config('jba-profile.attributes.resume.keep_storage') ? $user->id . '-' : '') . Str::uuid()->toString();
+        }
+        else {
+            $filePath = $path . (config('jba-profile.attributes.resume.keep_storage') ? $user->id . '-' : '') . uuid();
+        }
 
         Storage::disk('s3')->put($filePath, file_get_contents($file));
 

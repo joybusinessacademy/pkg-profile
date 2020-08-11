@@ -71,7 +71,8 @@ return [
             'multiple' => env('PROFILE_RESUME_MULTIPLE', false),
             'maximum' => env('PROFILE_RESUME_MAXIMUM', 5),
             'max_size' => env('PROFILE_RESUME_MAX_SIZE', 20000),
-            'mime_types' => env('PROFILE_RESUME_MIME_TYPES', 'pdf,doc,txt')
+            'mime_types' => env('PROFILE_RESUME_MIME_TYPES', 'pdf,doc,txt'),
+            'keep_storage' => false
         ],
 
         'profile' => [
