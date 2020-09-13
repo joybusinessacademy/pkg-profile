@@ -25,7 +25,9 @@ return [
 
         'reference' => \JoyBusinessAcademy\Profile\Models\Reference::class,
 
-        'resume' => \JoyBusinessAcademy\Profile\Models\Resume::class
+        'resume' => \JoyBusinessAcademy\Profile\Models\Resume::class,
+
+        'skill' =>  \JoyBusinessAcademy\Profile\Models\Skill::class,
     ],
 
     'table_names' => [
@@ -47,6 +49,8 @@ return [
         'references' => 'references',
 
         'resumes' => 'resumes',
+
+        'skills' => 'skills',
     ],
 
     'repositories' => [
@@ -62,6 +66,8 @@ return [
         'reference' => \JoyBusinessAcademy\Profile\Repositories\ReferenceRepository::class,
 
         'resume' => \JoyBusinessAcademy\Profile\Repositories\ResumeRepository::class,
+
+        'skill' => \JoyBusinessAcademy\Profile\Repositories\SkillRepository::class,
         
     ],
 

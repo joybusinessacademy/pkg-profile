@@ -26,7 +26,8 @@ class ExperienceRepository extends BaseRepository
     public function addOneProfileExperience(Model $user, $experience)
     {
         if(!$experience instanceof Model) {
-            $experience = $this->model->fill($experience);
+            $model = config('jba-profile.models.experience');
+            $experience = new $model($experience);
         }
 
         return $this->addProfileExperiences($user, collect([$experience]));
@@ -79,9 +80,7 @@ class ExperienceRepository extends BaseRepository
     {
         if($profile = $this->gateway->getUserProfile($user)) {
 
-            $experiences = $profile->experiences()->whereIn('id', $experienceIds);
-
-            $experiences->each(function($e){
+            $profile->experiences->whereIn('id', $experienceIds)->each(function($e){
                 $e->delete();
             });
         }

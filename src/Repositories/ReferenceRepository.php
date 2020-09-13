@@ -26,8 +26,8 @@ class ReferenceRepository extends BaseRepository
     public function addOneProfileReference(Model $user, $reference)
     {
         if(!$reference instanceof Model) {
-
-            $reference = $this->model->fill($reference);
+            $model = config('jba-profile.models.reference');
+            $reference = new $model($reference);
         }
 
         return $this->addProfileReferences($user, collect([$reference]));
@@ -80,9 +80,7 @@ class ReferenceRepository extends BaseRepository
     {
         if($profile = $this->gateway->getUserProfile($user)) {
 
-            $references = $profile->references()->whereIn('id', $referenceIds);
-
-            $references->each(function($e){
+            $profile->references->whereIn('id', $referenceIds)->each(function($e){
                 $e->delete();
             });
         }

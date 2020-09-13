@@ -78,6 +78,7 @@ class ProfileServiceProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations/0000_00_00_000005_create_jba_profile_resumes_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_jba_profile_resumes_table.php', 70),
                 __DIR__ . '/../database/migrations/0000_00_00_000006_update_jba_profile_resumes_table.php.stub' => $this->getMigrationFileName($filesystem, 'update_jba_profile_resumes_table.php', 80),
                 __DIR__ . '/../database/migrations/0000_00_00_000007_add_cover_letter_to_jba_profiles_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_cover_letter_to_jba_profiles_table.php', 90),
+                __DIR__ . '/../database/migrations/0000_00_00_000008_create_jba_profile_skills_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_jba_profile_skills_table.php', 100),
             ], 'jba-profile-migrations');
 
             $this->publishes([

@@ -27,7 +27,8 @@ class EducationRepository extends BaseRepository
     public function addOneProfileEducation(Model $user, $education)
     {
         if(!$education instanceof Model) {
-            $education = $this->model->fill($education);
+            $model = config('jba-profile.models.education');
+            $education = new $model($education);
         }
 
         return $this->addProfileEducations($user, collect([$education]));
@@ -73,7 +74,7 @@ class EducationRepository extends BaseRepository
         return true;
     }
 
-    public function deleteOneProfileEducation(Model $user, Model $education)
+    public function deleteOneProfileEducation(Model $user, $education)
     {
         if($education instanceof Model) {
             $id = $education->id;
@@ -97,9 +98,7 @@ class EducationRepository extends BaseRepository
     {
         if($profile = $this->gateway->getUserProfile($user)) {
 
-            $educations = $profile->educations()->whereIn('id', $educationIds);
-
-            $educations->each(function($e){
+            $profile->educations->whereIn('id', $educationIds)->each(function($e){
                 $e->delete();
             });
         }

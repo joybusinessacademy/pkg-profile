@@ -11,6 +11,7 @@ use JoyBusinessAcademy\Profile\Traits\HasManyEducations;
 use JoyBusinessAcademy\Profile\Traits\HasManyExperiences;
 use JoyBusinessAcademy\Profile\Traits\HasManyReferences;
 use JoyBusinessAcademy\Profile\Traits\HasManyResumes;
+use JoyBusinessAcademy\Profile\Traits\HasManySkills;
 use JoyBusinessAcademy\Profile\Traits\HasOneResume;
 use JoyBusinessAcademy\Profile\Traits\RefreshesProfileCache;
 
@@ -24,6 +25,7 @@ class Profile extends Model implements ProfileContract
         HasManyReferences,
         HasOneResume,
         HasManyResumes,
+        HasManySkills,
         RefreshesProfileCache;
 
     const GENDER_MALE = 'male';

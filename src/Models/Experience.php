@@ -42,6 +42,8 @@ class Experience extends Model
 
     public $timestamps = false;
 
+    protected $dates = ['start_date', 'end_date'];
+
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -65,4 +67,8 @@ class Experience extends Model
         return $types;
     }
 
+    public function getCurrentEmploymentAttribute($current)
+    {
+        return (boolean) $current;
+    }
 }

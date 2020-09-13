@@ -8,12 +8,18 @@
 
 namespace JoyBusinessAcademy\Profile\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use JoyBusinessAcademy\Profile\Facades\JbaProfile;
 use JoyBusinessAcademy\Profile\Http\Requests\CoverLetterRequest;
 
 class ProfileController extends Controller
 {
+    public function index(Request $request)
+    {
+        return JbaProfile::getUserProfile($request->user());
+    }
+
     public function updateCoverLetter(CoverLetterRequest $request)
     {
         JbaProfile::updateProfile($request->user(), ['cover_letter' => $request->cover_letter]);

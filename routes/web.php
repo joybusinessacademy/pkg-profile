@@ -32,4 +32,7 @@
 
     $router->put('/cover_letter', 'ProfileController@updateCoverLetter')
         ->name(dotUrl(config('jba-profile.route.prefix')) . '.cover_letter.update');
+
+    $router->get('/', 'ProfileController@index')
+        ->name(dotUrl(config('jba-profile.route.prefix')) . '.index');
 });

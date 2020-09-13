@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
+use JoyBusinessAcademy\Profile\Events\ProfileUpdated;
 use JoyBusinessAcademy\Profile\Exceptions\ProfileException;
 use JoyBusinessAcademy\Profile\ProfileGateway;
 
@@ -54,6 +56,7 @@ class ProfileRepository extends BaseRepository
             $user->profile()->save($this->model);
 
             $user->load('profile');
+
         }
         else {
             $user->profile->update($data);

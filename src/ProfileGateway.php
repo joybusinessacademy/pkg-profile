@@ -13,6 +13,8 @@ use Illuminate\Cache\CacheManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
+use JoyBusinessAcademy\Profile\Events\ProfileUpdated;
 use JoyBusinessAcademy\Profile\Exceptions\ProfileException;
 use JoyBusinessAcademy\Profile\Models\Profile;
 use JoyBusinessAcademy\Profile\Models\Resume;
@@ -102,6 +104,10 @@ class ProfileGateway
         $resumeRepo = config('jba-profile.repositories.resume');
 
         $this->resumeRepository = new $resumeRepo($this);
+
+        $skillRepo = config('jba-profile.repositories.skill');
+
+        $this->skillRepository = new $skillRepo($this);
 
         $this->initializeCache();
     }
@@ -197,7 +203,7 @@ class ProfileGateway
 
             if($user->profile) {
 
-                $relations = ['user', 'region', 'experiences', 'educations'];
+                $relations = ['user', 'region', 'experiences', 'educations', 'skills'];
 
                 if(config('jba-profile.attributes.resume.multiple')) {
                     $relations[] = 'resumes';
@@ -226,6 +232,7 @@ class ProfileGateway
         }
         else {
             $user->profile->update($data);
+
         }
 
         return true;
@@ -271,7 +278,7 @@ class ProfileGateway
         return $this->educationRepository->updateOneProfileEducation($user, $data);
     }
 
-    public function deleteOneProfileEducation(Model $user, Model $education)
+    public function deleteOneProfileEducation(Model $user, $education)
     {
         return $this->educationRepository->deleteOneProfileEducation($user, $education);
     }
@@ -280,7 +287,6 @@ class ProfileGateway
     {
         return $this->educationRepository->deleteProfileEducations($user, $educationIds);
     }
-
 
     public function addOneProfileReference(Model $user, $reference)
     {
@@ -327,6 +333,35 @@ class ProfileGateway
         return $this->resumeRepository->setDefaultProfileResume($user, $resume);
     }
 
+    public function addOneProfileSkill(Model $user, $skill)
+    {
+        return $this->skillRepository->addOneProfileSkill($user, $skill);
+    }
+
+    public function addProfileSkills(Model $user, $skills)
+    {
+        return $this->skillRepository->addProfileSkills($user, $skills);
+    }
+
+    public function updateOneProfileSkill(Model $user, $data)
+    {
+        return $this->skillRepository->updateOneProfileSkill($user, $data);
+    }
+
+    public function deleteOneProfileSkill(Model $user, Model $skill)
+    {
+        return $this->skillRepository->deleteOneProfileSkill($user, $skill);
+    }
+
+    public function deleteProfileSkills(Model $user, array $skillIds)
+    {
+        return $this->skillRepository->deleteProfileSkills($user, $skillIds);
+    }
+
+    public function cleanProfileSkills(Model $user)
+    {
+        return $this->skillRepository->cleanProfileSkills($user);
+    }
 /*
     public function __call($method, ...$arguments)
     {

@@ -1,0 +1,45 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use JoyBusinessAcademy\Profile\Contracts\Migration;
+
+class CreateJbaProfileEducationsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        if(!Schema::hasTable($this->getTableName('skills'))) {
+
+            Schema::create($this->getTableName('skills'), function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->bigInteger('profile_id')->unsigned();
+                $table->string('name', 32)->nullable();
+                $table->boolean('is_validated')->default(false);
+
+                $table->foreign('profile_id')
+                    ->references('id')
+                    ->on($this->getTableName('profiles'))
+                    ->onDelete('cascade');
+            });
+        }
+        else {
+            dump('Ignore' . __FILE__ . ' as ' . $this->getTableName('skills') . ' table has exists');
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists($this->getTableName('skills'));
+    }
+
+}
