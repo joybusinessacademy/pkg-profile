@@ -47,21 +47,19 @@ class ProfileRepository extends BaseRepository
         return $this->model->with(['region'])->where(['user_id' => $userId])->first();
     }
 
-    public function updateProfile(Model $user, $data)
+    public function saveUserProfile(Model $user, array $data)
     {
-        if($user->profile == null) {
+        if(!$profile = $this->gateway->getUserProfile($user)) {
 
-            $this->model->fill($data);
-
-            $user->profile()->save($this->model);
-
-            $user->load('profile');
-
+            $user->profile()->save($data);
         }
         else {
-            $user->profile->update($data);
+            $profile->update($data);
+
         }
 
-        return $user->profile;
+        return true;
     }
+
+
 }

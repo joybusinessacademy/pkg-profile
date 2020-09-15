@@ -55,7 +55,7 @@ class ProfileGateway
     /**
      * @var string
      */
-    protected $profileClass;
+    protected $profileRepository;
 
     /**
      * @var RegionRepository
@@ -87,7 +87,9 @@ class ProfileGateway
     {
         $this->cacheManager = $cacheManager;
 
-        $this->profileClass = config('jba-profile.models.profile');
+        $profileRepo = config('jba-profile.repositories.profile');
+
+        $this->profileRepository = new $profileRepo($this);
 
         $referenceRepo = config('jba-profile.repositories.reference');
 
@@ -236,6 +238,11 @@ class ProfileGateway
         }
 
         return true;
+    }
+
+    public function saveUserProfile(Model $user, array $profile)
+    {
+        return $this->profileRepository->saveUserProfile($user, $profile);
     }
 
     public function addOneProfileExperience(Model $user, $experience)

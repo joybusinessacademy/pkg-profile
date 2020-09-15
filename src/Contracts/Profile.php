@@ -33,4 +33,20 @@ interface Profile
      * A profile may have multiple experiences
      */
     public function experiences(): HasMany;
+
+    /**
+     * A profile may have multiple educations
+     */
+    public function educations(): HasMany;
+
+    /**
+     * A profile may have multiple references
+     */
+    public function references(): HasMany;
+
+    /**
+     * A profile may have multiple skills
+     */
+    public function skills(): HasMany;
+
 }
